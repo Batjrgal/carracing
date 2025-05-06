@@ -1039,23 +1039,21 @@ speed = speed.clamp(0, maxSpeed);
     }`;
   }
 
-  // Хамгийн өндөр оноог олж илгээх
+  // Хамгийн өндөр оноог (хамгийн бага цаг) секундаар илгээх
   if (highscores.length > 0) {
-    // Цагын форматыг тоо руу хөрвүүлэх (X'YY"ZZZ → миллисекунд)
-    const highestScore = highscores.reduce((minTime, currentTime) => {
+    const bestTimeInSeconds = highscores.reduce((minTime, currentTime) => {
       const [minutes, rest] = currentTime.split("'");
       const [seconds, milliseconds] = rest.split('"');
-      const totalMs = parseInt(minutes) * 60000 + 
-                      parseInt(seconds) * 1000 + 
-                      parseInt(milliseconds);
+      const totalSeconds = parseInt(minutes) * 60 + 
+                          parseInt(seconds) + 
+                          parseInt(milliseconds)/1000;
       
-      return Math.min(minTime, totalMs); // Бага цаг нь илүү сайн
+      return Math.min(minTime, totalSeconds);
     }, Infinity);
 
-    // Хамгийн өндөр оноог (хамгийн бага цаг) илгээх
     window.parent.postMessage({ 
       type: "highscore", 
-      score: highestScore 
+      score: bestTimeInSeconds.toFixed(3) // 3 аравтын оронтой секундээр
     }, "*");
   }
 }
