@@ -787,29 +787,36 @@
         countDown -= step;
 
         // left / right position
-        playerX -= (lines[startPos].curve / 5000) * step * speed;
+        // left / right position
+playerX -= (lines[startPos].curve / 5000) * step * speed;
 
-        if (KEYS.ArrowRight)
-          (hero.style.backgroundPosition = "-220px 0"),
-            (playerX += 0.007 * step * speed);
-        else if (KEYS.ArrowLeft)
-          (hero.style.backgroundPosition = "0 0"),
-            (playerX -= 0.007 * step * speed);
-        else hero.style.backgroundPosition = "-110px 0";
+if (KEYS.ArrowRight || KEYS.KeyD) {
+  hero.style.backgroundPosition = "-220px 0";
+  playerX += 0.007 * step * speed;
+} else if (KEYS.ArrowLeft || KEYS.KeyA) {
+  hero.style.backgroundPosition = "0 0";
+  playerX -= 0.007 * step * speed;
+} else {
+  hero.style.backgroundPosition = "-110px 0";
+}
 
-        playerX = playerX.clamp(-3, 3);
+playerX = playerX.clamp(-3, 3);
 
-        // speed
+// speed
+if (inGame && (KEYS.ArrowUp || KEYS.KeyW)) {
+  speed = accelerate(speed, accel, step);
+} else if (KEYS.ArrowDown || KEYS.KeyS) {
+  speed = accelerate(speed, breaking, step);
+} else {
+  speed = accelerate(speed, decel, step);
+}
 
-        if (inGame && KEYS.ArrowUp) speed = accelerate(speed, accel, step);
-        else if (KEYS.ArrowDown) speed = accelerate(speed, breaking, step);
-        else speed = accelerate(speed, decel, step);
+if (Math.abs(playerX) > 0.55 && speed >= maxOffSpeed) {
+  speed = accelerate(speed, offDecel, step);
+}
 
-        if (Math.abs(playerX) > 0.55 && speed >= maxOffSpeed) {
-          speed = accelerate(speed, offDecel, step);
-        }
+speed = speed.clamp(0, maxSpeed);
 
-        speed = speed.clamp(0, maxSpeed);
 
         // update map
         let current = map[mapIndex];
