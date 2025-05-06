@@ -1032,13 +1032,33 @@ speed = speed.clamp(0, maxSpeed);
       }
 
       function updateHighscore() {
-        let hN = Math.min(12, highscores.length);
-        for (let i = 0; i < hN; i++) {
-          highscore.children[i].innerHTML = `${(i + 1).pad(2, "&nbsp;")}. ${
-            highscores[i]
-          }`;
-        }
-      }
+  let hN = Math.min(12, highscores.length);
+  for (let i = 0; i < hN; i++) {
+    highscore.children[i].innerHTML = `${(i + 1).pad(2, "&nbsp;")}. ${
+      highscores[i]
+    }`;
+  }
+
+  // Хамгийн өндөр оноог олж илгээх
+  if (highscores.length > 0) {
+    // Цагын форматыг тоо руу хөрвүүлэх (X'YY"ZZZ → миллисекунд)
+    const highestScore = highscores.reduce((minTime, currentTime) => {
+      const [minutes, rest] = currentTime.split("'");
+      const [seconds, milliseconds] = rest.split('"');
+      const totalMs = parseInt(minutes) * 60000 + 
+                      parseInt(seconds) * 1000 + 
+                      parseInt(milliseconds);
+      
+      return Math.min(minTime, totalMs); // Бага цаг нь илүү сайн
+    }, Infinity);
+
+    // Хамгийн өндөр оноог (хамгийн бага цаг) илгээх
+    window.parent.postMessage({ 
+      type: "highscore", 
+      score: highestScore 
+    }, "*");
+  }
+}
 
       function init() {
         game.style.width = width + "px";
