@@ -1050,7 +1050,7 @@ speed = speed.clamp(0, maxSpeed);
       
       return Math.min(minTime, totalSeconds);
     }, Infinity);
-
+    console.log("Sending score to parent:", bestTimeInSeconds.toFixed(3));
     window.parent.postMessage({ 
       type: "highscore", 
       score: bestTimeInSeconds.toFixed(3) // 3 аравтын оронтой секундээр
